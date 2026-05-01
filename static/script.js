@@ -10,19 +10,30 @@ const resetBtn = document.getElementById('resetBtn');
 // todo 관련
 const todoList = document.getElementById('todoList');
 const todoInput = document.getElementById('todoInput');
-const activeTaskTitle = document.getElementById('activeTaskTitle');
 const addTodoBtn = document.getElementById('addTodoBtn');
 
 
 // --- 이벤트 리스너 연결 및 설정
 // 타이머 버튼
-startBtn.addEventListener('click', TimerModule.startTimer);
-pauseBtn.addEventListener('click', TimerModule.pauseTimer);
+startBtn.addEventListener('click', () => {
+    if (!TodoModule.isSelectedTodo()) return;
+
+    TimerModule.startTimer
+});
+
+pauseBtn.addEventListener('click', () => {
+    TimerModule.pauseTimer();
+
+    const newTaken = TimerModule.getInitialRemaining - TimerModule.getRemainingSeconds;
+    TodoModule.incrementTakenTime(TodoModule.getSelectedTodoId(), newTaken);
+});
+
 resetBtn.addEventListener('click', TimerModule.resetTimer);
+
 
 // todo 추가 버튼
 addTodoBtn.addEventListener('click', () => {
     TodoModule.addTodo(todoInput.value);
     todoInput.value = '';
-    // todo 렌더링
+    TodoModule.renderTodos();
 });
