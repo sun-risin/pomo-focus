@@ -46,6 +46,7 @@ export function startTimer() {
     timerInterval = setInterval(() => {
         if (remainingSeconds <= 0) {
             clearInterval(timerInterval);
+            settingArea.classList.remove('hidden');
             return;
         }
         remainingSeconds--;
