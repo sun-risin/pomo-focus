@@ -9,9 +9,9 @@
     <div class="container">
         <!-- 좌측: Todo 리스트 -->
         <aside class="sidebar">
-            <h2>나의 할 일</h2>
+            <h2>Todo List</h2>
             <div class="todo-input-group">
-                <input type="text" id="todoInput" placeholder="새로운 할 일 입력...">
+                <input type="text" id="todoInput" placeholder="새로운 Todo 입력...">
                 <button id="addTodoBtn">추가</button>
             </div>
             <ul id="todoList">
@@ -21,7 +21,7 @@
 
         <!-- 우측: 타이머 및 대시보드 -->
         <main class="timer-section">
-            <h2 id="activeTaskTitle">할 일을 먼저 선택해주세요</h2>
+            <h2 id="activeTaskTitle">Todo를 먼저 선택해주세요.</h2>
 
             <!-- 뽀모도로 기법을 위한 원형 타이머 자리 -->
             <div class="timer-circle" id="timerCircle">
@@ -34,6 +34,8 @@
                 <button id="pauseBtn">일시정지</button>
                 <button id="resetBtn">재설정</button>
             </div>
+
+            <h4>타이머가 만료되거나 정지되어야 Todo에 경과 시간이 기록됩니다.</h4>
 
             <div class="timer-setting" id="settingArea">
                 <input type="number" id="setMin" value="30" min="0" max="60"> 분
