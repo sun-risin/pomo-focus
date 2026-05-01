@@ -1,7 +1,8 @@
 // --- 상태 관리 변수
 let timerInterval = null;       // 1초 단위 누적 시간 갱신용
-let totalSettingSeconds = 1800; // 전체 설정 시간 - 기본 30분
 let remainingSeconds = 1800;    // 남은 시간
+let initialRemaining = remainingSeconds;
+let animationFrameId = null;    // 원형 타이머 부드러운 애니메이션용
 
 // --- DOM 요소 참조 가져오기
 const settingArea = document.getElementById('settingArea');
@@ -10,39 +11,78 @@ const settingSec = document.getElementById('setSec');
 const remainTimerMin = document.getElementById('timerMinutes');
 const remainTimerSec = document.getElementById('timerSeconds');
 
+const timerCircle = document.getElementById('timerCircle');
+
+// --- 내부 변수 get
 // 설정 읽기
 function getSettingTime() {
     const m = parseInt(settingMin.value) || 0;
     const s = parseInt(settingSec.value) || 0;
     return (m * 60) + s;
 }
+// 작동 중인지
+function isRunning() {
+    return animationFrameId !== null;
+}
+// 남은 시간 get : export
+export function getRemainingSeconds() {
+    return remainingSeconds;
+}
 
-// --- 시각적 업데이트
-// 나중에 원형 타이머 진행도 업데이트 기능 추가하기
+
+// --- 타이머 시각적 업데이트
+// 진행도 시각화 - 원형 모양 변경
+function updateTimerVisual(progress) {
+    timerCircle.style.setProperty('--progress', progress);
+}
+
 // 텍스트 변경
-function updateTextOnly() {
+function updateTimerText() {
     const m = Math.floor(remainingSeconds / 60);
     const s = remainingSeconds % 60;
     remainTimerMin.innerText = String(m).padStart(2, '0');
     remainTimerSec.innerText = String(s).padStart(2, '0');
-    
-    // 나중에 todo랑 관련 지어서 누적시간 넣기!
 }
 
 // --- 타이머 제어 함수들 : export
 // start
-export function startTimer() {
-    // 나중에 Todo 선택 여부랑 연결!
+export function startTimer(onTick, onFinish) {
+    // todo 연결하기
+    if (isRunning()) return;
 
     // 시작 시 제어 버튼들 숨기기
     settingArea.classList.add('hidden');
     
-    // 설정창의 값을 읽어와서 기준 시간 설정
-    const total = getSettingTime();
-    totalSettingSeconds = total;
+    const totalMs = remainingSeconds * 1000;
+    const startTime = performance.now();
     
-    if (totalSettingSeconds <= 0) return;
-    
+    // 애니메이션 루프 (circle 진행도 업데이트)
+    function animate(currentTime) {
+        const elapsedMs = currentTime - startTime;
+        const currentRemainingMs = totalMs - elapsedMs;
+
+        if (currentRemainingMs <= 0) {
+            // 보정 - 종료 시점에 정확한 값 강제 주입
+            remainingSeconds = 0;
+
+            pauseTimer();
+            updateTimerVisual(0);
+            updateTimerText();
+            return;
+        }
+
+        // 화면 표시용 초 단위 업데이트
+        remainingSeconds = Math.ceil(currentRemainingMs / 1000);
+        
+        // 실시간 퍼센트 계산 (requestAnimationFrame으로 매 프레임 갱신)
+        const currentProgress = (currentRemainingMs / totalMs) * 100;
+        updateTimerVisual(currentProgress);
+        updateTimerText();
+        
+        animationFrameId = requestAnimationFrame(animate);
+    }
+    animationFrameId = requestAnimationFrame(animate);
+
     timerInterval = setInterval(() => {
         if (remainingSeconds <= 0) {
             clearInterval(timerInterval);
@@ -50,13 +90,16 @@ export function startTimer() {
             return;
         }
         remainingSeconds--;
-        updateTextOnly();
+        updateTimerText();
     }, 1000);
 }
 
-// pause
+// pause // todo 연결하기
 export function pauseTimer() {
-    // 나머지 UI 적용 로직 추가 예정
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -69,9 +112,9 @@ export function resetTimer() {
     pauseTimer();
 
     const total = getSettingTime();
-    totalSettingSeconds = total;
     remainingSeconds = total;
+    initialRemaining = remainingSeconds;
 
-    updateTextOnly();
-    // 나머지 UI 적용 로직 추가 예정
+    updateTimerVisual(100);
+    updateTimerText();
 }
