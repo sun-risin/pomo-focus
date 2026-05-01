@@ -28,6 +28,10 @@ function isRunning() {
 export function getRemainingSeconds() {
     return remainingSeconds;
 }
+// 초기 남은 시간 get : export
+export function getInitialRemaining() {
+    return initialRemaining;
+}
 
 
 // --- 타이머 시각적 업데이트
@@ -47,10 +51,9 @@ function updateTimerText() {
 // --- 타이머 제어 함수들 : export
 // start
 export function startTimer(onTick, onFinish) {
-    // todo 연결하기
     if (isRunning()) return;
 
-    // 시작 시 제어 버튼들 숨기기
+    // 시작 시 세팅 칸 숨기기
     settingArea.classList.add('hidden');
     
     const totalMs = remainingSeconds * 1000;
@@ -94,8 +97,10 @@ export function startTimer(onTick, onFinish) {
     }, 1000);
 }
 
-// pause // todo 연결하기
+// pause
 export function pauseTimer() {
+    if (!isRunning()) return;
+    
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
@@ -109,6 +114,10 @@ export function pauseTimer() {
 
 // reset
 export function resetTimer() {
+    if (isRunning()) {
+        alert("일시정지 후 재설정하세요.");
+        return;
+    }
     pauseTimer();
 
     const total = getSettingTime();
