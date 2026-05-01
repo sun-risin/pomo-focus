@@ -1,8 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 import json
 import os
 
@@ -16,6 +16,26 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def home():
     with open("static/index.html", encoding="utf-8") as f:
         return f.read()
+    
+# --- JSON 파일 관련 (DB 대신 파일 저장)
+# 파일 경로 지정
+DB_FILE = ".DB/todos.json"
 
+# 데이터 모델 정의 - 프론트와 맞춰둠
+class Todo(BaseModel):
+    id: int
+    title: str
+    completed: bool
+    totalTime: int  # 초 단위
+    
+# - JSON 파일에 데이터 쓰기
+def write_db(data: List[dict]):
+    with open(DB_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+@app.post("/todos/save")
+def save_todos(todos: List[Todo]):
+    write_db([todo.model_dump() for todo in todos])
+    return {"message": "Saved successfully"}
 
 # 로컬 서버 실행: uvicorn app.main:app --reload

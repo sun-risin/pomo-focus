@@ -12,12 +12,25 @@ const todoList = document.getElementById('todoList');
 const todoInput = document.getElementById('todoInput');
 const addTodoBtn = document.getElementById('addTodoBtn');
 
-// 경과 기록 및 재렌더링 : 타이머 만료 or 정지 시
+
+// --- API (서버 통신)
+const BASE = '';    // 혹시 모르니...
+const api = {
+  saveAll: async () => {
+    await fetch(`${BASE}/todos/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(TodoModule.getTodos())
+    });
+  }
+};
+
+
+// --- 경과 기록 및 재렌더링 : 타이머 만료 or 정지 시
 function commitTakenTime(){
     const newTaken = TimerModule.getTakenTime();
     const selectedId = TodoModule.getSelectedTodoId();
     TodoModule.incrementTakenTime(selectedId, newTaken);
-    
     TodoModule.renderTodos();
 }
 
@@ -39,8 +52,9 @@ pauseBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', TimerModule.resetTimer);
 
 // todo 추가 버튼
-addTodoBtn.addEventListener('click', () => {
+addTodoBtn.addEventListener('click', async () => {
     TodoModule.addTodo(todoInput.value);
     todoInput.value = '';
     TodoModule.renderTodos();
+    await api.saveAll(); // todo 추가 후 전체 저장
 });

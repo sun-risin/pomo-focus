@@ -6,11 +6,11 @@ let selectedTodoId = null;
 const todoList = document.getElementById('todoList');
 const activeTaskTitle = document.getElementById('activeTaskTitle');
 
+// 이하 모두 export
 // --- 내부 변수 get
-function getTodos(){ // 복사본 반환 (원본 배열 보호)
+export function getTodos(){ // 복사본 반환 (원본 배열 보호)
     return [...todos];
 }
-// 이하 모두 export
 export function getSelectedTodoId(){
     return selectedTodoId;
 }
