@@ -12,11 +12,30 @@ const todoList = document.getElementById('todoList');
 const todoInput = document.getElementById('todoInput');
 const addTodoBtn = document.getElementById('addTodoBtn');
 
+// 경과 기록 및 재렌더링 : 타이머 만료 or 정지 시
+function commitTakenTime(){
+    const newTaken = TimerModule.getTakenTime();
+    const selectedId = TodoModule.getSelectedTodoId();
+    TodoModule.incrementTakenTime(selectedId, newTaken);
+    
+    TodoModule.renderTodos();
+}
 
 // --- 이벤트 리스너 연결 및 설정
 // 타이머 버튼
-startBtn.addEventListener('click', TimerModule.startTimer);
-pauseBtn.addEventListener('click', TimerModule.pauseTimer);
+startBtn.addEventListener('click', () => {
+    if (!TodoModule.isSelectedTodo()) return;
+
+    TimerModule.startTimer(() => {
+        commitTakenTime();
+    });
+});
+
+pauseBtn.addEventListener('click', () => {
+    TimerModule.pauseTimer();
+    commitTakenTime();
+});
+
 resetBtn.addEventListener('click', TimerModule.resetTimer);
 
 // todo 추가 버튼

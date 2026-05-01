@@ -1,7 +1,7 @@
 // --- 상태 관리 변수
 let timerInterval = null;       // 1초 단위 누적 시간 갱신용
 let remainingSeconds = 1800;    // 남은 시간
-let initialRemaining = remainingSeconds;
+let intervalStart = null;       // 현재 세션 시작 시각
 let animationFrameId = null;    // 원형 타이머 부드러운 애니메이션용
 
 // --- DOM 요소 참조 가져오기
@@ -28,9 +28,14 @@ function isRunning() {
 export function getRemainingSeconds() {
     return remainingSeconds;
 }
-// 초기 남은 시간 get : export
-export function getInitialRemaining() {
-    return initialRemaining;
+// 경과 기록 get : export
+export function getTakenTime() {
+    if (intervalStart === null) return;
+
+    const newTaken = Math.round((performance.now() - intervalStart) / 1000);
+    intervalStart = null;
+
+    return newTaken;
 }
 
 
@@ -58,6 +63,7 @@ export function startTimer(onTick, onFinish) {
     
     const totalMs = remainingSeconds * 1000;
     const startTime = performance.now();
+    intervalStart = startTime;
     
     // 애니메이션 루프 (circle 진행도 업데이트)
     function animate(currentTime) {
@@ -86,15 +92,7 @@ export function startTimer(onTick, onFinish) {
     }
     animationFrameId = requestAnimationFrame(animate);
 
-    timerInterval = setInterval(() => {
-        if (remainingSeconds <= 0) {
-            clearInterval(timerInterval);
-            settingArea.classList.remove('hidden');
-            return;
-        }
-        remainingSeconds--;
-        updateTimerText();
-    }, 1000);
+    timerInterval = setInterval(1000);
 }
 
 // pause
@@ -122,7 +120,6 @@ export function resetTimer() {
 
     const total = getSettingTime();
     remainingSeconds = total;
-    initialRemaining = remainingSeconds;
 
     updateTimerVisual(100);
     updateTimerText();
