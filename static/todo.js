@@ -11,7 +11,7 @@ export function getTodos(){ // 복사본 반환 (원본 배열 보호)
 export function getSelectedTodoId(){
     return selectedTodoId;
 }
-export function getSelectedTodos(){
+export function getSelectedTodo(){
     return todos.find(todo => todo.id === selectedTodoId) ?? null;
 }
 
@@ -39,7 +39,7 @@ export function toggleTaskComplete(id) {
 }
 
 // todo 수행 시 걸린 시간 증가 처리
-export function incrementTakenTime(id){
+export function incrementTakenTime(id, newTotal){
     const todo = todos.find(t => t.id === id);
-    if (todo) todo.totalTime++;
+    if (todo) todo.totalTime = newTotal;
 }
