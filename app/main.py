@@ -42,6 +42,17 @@ def update_todo_time(todo_id: int, totalTime: int):
     write_db(todos)
     return {"message": "Time updated"}
 
+# 특정 Todo의 완료 여부 업데이트
+@app.put("/todo-update/completed/{todo_id}")
+def update_todo_completed(todo_id: int, completed: bool):
+    todos = read_db()
+    for todo in todos:
+        if todo["id"] == todo_id:
+            todo["completed"] = completed
+            break
+    write_db(todos)
+    return {"message": "Completed updated"}
+
 # - JSON 파일 데이터에서 읽기        
 @app.get("/todos", response_model=List[Todo])
 def get_todos():
