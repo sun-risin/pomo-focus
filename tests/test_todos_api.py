@@ -2,7 +2,7 @@ import pytest
 import os
 from fastapi.testclient import TestClient
 from app.main import app
-from app.db import DB_FILE
+from app.config import DB_FILE
 
 client = TestClient(app)
 
