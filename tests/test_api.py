@@ -97,3 +97,36 @@ def test_update_time_no_matching_id():
 
     data = client.get("/todos").json()
     assert data[0]["totalTime"] == 0  # 변경 없음
+    
+# --- PUT /todo-update/completed/{todo_id}
+def test_update_completed_success():
+    client.post("/todos/save", json=[
+        {"id": 1, "title": "공부", "completed": False, "totalTime": 0}
+    ])
+
+    r = client.put("/todo-update/completed/1?completed=true")
+    assert r.status_code == 200
+    assert r.json()["message"] == "Completed updated"
+
+    data = client.get("/todos").json()
+    assert data[0]["completed"] == True
+
+def test_update_completed_toggle_back():
+    client.post("/todos/save", json=[
+        {"id": 1, "title": "공부", "completed": True, "totalTime": 0}
+    ])
+
+    client.put("/todo-update/completed/1?completed=false")
+    data = client.get("/todos").json()
+    assert data[0]["completed"] == False
+
+def test_update_completed_no_matching_id():
+    client.post("/todos/save", json=[
+        {"id": 1, "title": "공부", "completed": False, "totalTime": 0}
+    ])
+
+    r = client.put("/todo-update/completed/999?completed=true")
+    assert r.status_code == 200
+
+    data = client.get("/todos").json()
+    assert data[0]["completed"] == False  # 변경 없음
