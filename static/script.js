@@ -26,6 +26,11 @@ const api = {
   loadTodos: async () => {
     const res = await fetch(`${BASE}/todos`);
     return await res.json();
+  },
+   updateTime: async (id, totalTime) => {
+    await fetch(`${BASE}/todos/time-update/${id}?totalTime=${totalTime}`, {
+      method: 'PUT'
+    });
   }
 };
 
@@ -34,8 +39,17 @@ const api = {
 function commitTakenTime(){
     const newTaken = TimerModule.getTakenTime();
     const selectedId = TodoModule.getSelectedTodoId();
-    TodoModule.incrementTakenTime(selectedId, newTaken);
-    TodoModule.renderTodos();
+
+    // 시간이 흘렀을 때만 업데이트
+    if (selectedId !== null && newTaken > 0) {
+        // 브라우저
+        TodoModule.incrementTakenTime(selectedId, newTaken);
+        TodoModule.renderTodos();
+
+        // 서버
+        // TodoModule에 id로 toataltime 가져오는 거 필요
+        await api.updateTime(selectedId, todo.totalTime);
+    }
 }
 
 // --- 이벤트 리스너 연결 및 설정
