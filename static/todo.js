@@ -24,6 +24,11 @@ export function setSelectedTodoId(id) {
 }
 
 // --- todo 제어
+// 서버에서 받아온 데이터로 초기화
+export function loadTodos(dbTodos){
+    todos = [...dbTodos];
+}
+
 // todo 추가
 export function addTodo(title) {
     const newTodo = {

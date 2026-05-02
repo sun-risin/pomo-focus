@@ -3,8 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List
-import json
-import os
+from app.db import write_db, read_db
 
 app = FastAPI()
 
@@ -18,9 +17,6 @@ def home():
         return f.read()
     
 # --- JSON 파일 관련 (DB 대신 파일 저장)
-# 파일 경로 지정
-DB_FILE = ".DB/todos.json"
-
 # 데이터 모델 정의 - 프론트와 맞춰둠
 class Todo(BaseModel):
     id: int
@@ -29,13 +25,14 @@ class Todo(BaseModel):
     totalTime: int  # 초 단위
     
 # - JSON 파일에 데이터 쓰기
-def write_db(data: List[dict]):
-    with open(DB_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
-
 @app.post("/todos/save")
 def save_todos(todos: List[Todo]):
     write_db([todo.model_dump() for todo in todos])
     return {"message": "Saved successfully"}
+
+# - JSON 파일 데이터에서 읽기        
+@app.get("/todos", response_model=List[Todo])
+def get_todos():
+    return read_db()
 
 # 로컬 서버 실행: uvicorn app.main:app --reload

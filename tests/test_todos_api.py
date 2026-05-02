@@ -1,7 +1,8 @@
 import pytest
 import os
 from fastapi.testclient import TestClient
-from app.main import app, DB_FILE
+from app.main import app
+from app.config import DB_FILE
 
 client = TestClient(app)
 
@@ -37,7 +38,7 @@ def test_save_todos_multiple():
     ]
     client.post("/todos/save", json=todos)
 
-    r = client.get("/get-todos")
+    r = client.get("/todos")
     assert len(r.json()) == 2
 
 def test_save_todos_overwrites():
@@ -50,7 +51,24 @@ def test_save_todos_overwrites():
         {"id": 2, "title": "나중", "completed": False, "totalTime": 0}
     ])
 
-    r = client.get("/get-todos")
+    r = client.get("/todos")
     data = r.json()
     assert len(data) == 1
     assert data[0]["title"] == "나중"
+    
+# --- GET /todos
+def test_get_todos_empty():
+    r = client.get("/todos")
+    assert r.status_code == 200
+    assert r.json() == []
+
+def test_get_todos_returns_saved_data():
+    # 먼저 저장
+    todos = [{"id": 1, "title": "공부", "completed": False, "totalTime": 0}]
+    client.post("/todos/save", json=todos)
+
+    r = client.get("/todos")
+    assert r.status_code == 200
+    data = r.json()
+    assert len(data) == 1
+    assert data[0]["title"] == "공부"
