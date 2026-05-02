@@ -26,16 +26,30 @@ const api = {
   loadTodos: async () => {
     const res = await fetch(`${BASE}/todos`);
     return await res.json();
+  },
+   updateTime: async (id, totalTime) => {
+    await fetch(`${BASE}/todos/time-update/${id}?totalTime=${totalTime}`, {
+      method: 'PUT'
+    });
   }
 };
 
 
 // --- 경과 기록 및 재렌더링 : 타이머 만료 or 정지 시
-function commitTakenTime(){
+async function commitTakenTime(){
     const newTaken = TimerModule.getTakenTime();
     const selectedId = TodoModule.getSelectedTodoId();
-    TodoModule.incrementTakenTime(selectedId, newTaken);
-    TodoModule.renderTodos();
+
+    // 시간이 흘렀을 때만 업데이트
+    if (selectedId !== null && newTaken > 0) {
+        // 브라우저
+        TodoModule.incrementTakenTime(selectedId, newTaken);
+        TodoModule.renderTodos();
+
+        // 서버
+        const todoTotalTime = TodoModule.getTotalTimeByTodoId(selectedId);
+        await api.updateTime(selectedId, todoTotalTime);
+    }
 }
 
 // --- 이벤트 리스너 연결 및 설정
