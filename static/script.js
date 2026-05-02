@@ -47,8 +47,8 @@ function commitTakenTime(){
         TodoModule.renderTodos();
 
         // 서버
-        // TodoModule에 id로 toataltime 가져오는 거 필요
-        await api.updateTime(selectedId, todo.totalTime);
+        const todoTotalTime = TodoModule.getTotalTimeByTodoId(selectedId);
+        await api.updateTime(selectedId, todoTotalTime);
     }
 }
 

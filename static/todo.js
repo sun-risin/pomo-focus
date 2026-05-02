@@ -17,6 +17,11 @@ export function getSelectedTodoId(){
 export function isSelectedTodo() {
     return todos.find(t => t.id === selectedTodoId) ?? null;
 }
+// id로 특정 todo total time조회
+export function getTotalTimeByTodoId(id) {
+  const todo = todos.find(t => t.id === id) ?? null;
+  return todo.totalTime;
+}
 
 // --- 내부 set
 export function setSelectedTodoId(id) {
