@@ -1,0 +1,35 @@
+name: CI (Push to main, Docker Verify)
+on:
+  pull_request:
+  push:
+    branches: 
+      - "main"
+jobs:
+  docker-verify:
+    name: Docker Build (CI)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t pomofocus:ci .
+
+      - name: Run container
+        run: |
+          docker run -d --name pomofocus_ci \
+          -e PORT=10000 \
+          -p 10000:10000 \
+          pomofocus:ci
+
+      - name: Check container
+        uses: jtalk/url-health-check-action@v5
+        with:
+          url: http://localhost:10000/
+          max-attempts: 3
+          retry-delay: 2s
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f pomofocus_ci || true
