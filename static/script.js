@@ -36,7 +36,7 @@ const api = {
 
 
 // --- 경과 기록 및 재렌더링 : 타이머 만료 or 정지 시
-function commitTakenTime(){
+async function commitTakenTime(){
     const newTaken = TimerModule.getTakenTime();
     const selectedId = TodoModule.getSelectedTodoId();
 
