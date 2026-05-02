@@ -28,7 +28,7 @@ const api = {
     return await res.json();
   },
    updateTime: async (id, totalTime) => {
-    await fetch(`${BASE}/todos/time-update/${id}?totalTime=${totalTime}`, {
+    await fetch(`${BASE}/todo-update/time/${id}?totalTime=${totalTime}`, {
       method: 'PUT'
     });
   }

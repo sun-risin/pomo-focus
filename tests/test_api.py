@@ -73,13 +73,13 @@ def test_get_todos_returns_saved_data():
     assert len(data) == 1
     assert data[0]["title"] == "공부"
     
-# --- PUT /todos/time-update/{todo_id}
+# --- PUT /todo-update/time/{todo_id}
 def test_update_time_success():
     client.post("/todos/save", json=[
         {"id": 1, "title": "공부", "completed": False, "totalTime": 0}
     ])
 
-    r = client.put("/todos/time-update/1?totalTime=300")
+    r = client.put("/todo-update/time/1?totalTime=300")
     assert r.status_code == 200
     assert r.json()["message"] == "Time updated"
 
@@ -92,7 +92,7 @@ def test_update_time_no_matching_id():
         {"id": 1, "title": "공부", "completed": False, "totalTime": 0}
     ])
 
-    r = client.put("/todos/time-update/999?totalTime=300")
+    r = client.put("/todo-update/time/999?totalTime=300")
     assert r.status_code == 200
 
     data = client.get("/todos").json()

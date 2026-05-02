@@ -30,8 +30,9 @@ def save_todos(todos: List[Todo]):
     write_db([todo.model_dump() for todo in todos])
     return {"message": "Saved successfully"}
 
+# - 특정 Todo 업데이트하기
 # 특정 Todo의 시간만 업데이트하고 싶을 때를 위한 간소화된 엔드포인트
-@app.put("/todos/time-update/{todo_id}")
+@app.put("/todo-update/time/{todo_id}")
 def update_todo_time(todo_id: int, totalTime: int):
     todos = read_db()
     for todo in todos:
