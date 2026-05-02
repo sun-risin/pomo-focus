@@ -1,3 +1,5 @@
+import { api } from "./API.js";
+
 // --- 상태 관리 변수
 let todos = [];
 let selectedTodoId = null;
@@ -80,10 +82,11 @@ export function renderTodos() {
             <span class="todo-time-tag">${formatAccumulated(todo.totalTime)}</span>
         `;
 
-        li.querySelector('input').addEventListener('click', (e) => {
+        li.querySelector('input').addEventListener('click', async (e) => {
             e.stopPropagation();
             toggleTaskComplete(todo.id);
             renderTodos();
+            await api.updateCompleted(todo.id, todo.completed);
         });
 
         li.addEventListener('click', () => {

@@ -1,5 +1,6 @@
 import * as TimerModule from "./timer.js";
 import * as TodoModule from "./todo.js";
+import { api } from "./API.js";
 
 // --- DOM 요소 참조 가져오기
 // 타이머 버튼
@@ -11,28 +12,6 @@ const resetBtn = document.getElementById('resetBtn');
 const todoList = document.getElementById('todoList');
 const todoInput = document.getElementById('todoInput');
 const addTodoBtn = document.getElementById('addTodoBtn');
-
-
-// --- API (서버 통신)
-const BASE = '';    // 혹시 모르니...
-const api = {
-  saveAll: async () => {
-    await fetch(`${BASE}/todos/save`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(TodoModule.getTodos())
-    });
-  },
-  loadTodos: async () => {
-    const res = await fetch(`${BASE}/todos`);
-    return await res.json();
-  },
-   updateTime: async (id, totalTime) => {
-    await fetch(`${BASE}/todos/time-update/${id}?totalTime=${totalTime}`, {
-      method: 'PUT'
-    });
-  }
-};
 
 
 // --- 경과 기록 및 재렌더링 : 타이머 만료 or 정지 시
