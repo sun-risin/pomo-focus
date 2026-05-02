@@ -24,7 +24,7 @@ const api = {
     });
   },
   loadTodos: async () => {
-    const res = await fetch(`${BASE}/get-todos`);
+    const res = await fetch(`${BASE}/todos`);
     return await res.json();
   }
 };
