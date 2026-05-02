@@ -17,7 +17,7 @@ export const api = {
     });
   },
   updateCompleted: async (id, completed) => {
-    await fetch(`${BASE}/todo-update/completed/${id}?completed=${isCompleted}`, {
+    await fetch(`${BASE}/todo-update/completed/${id}?completed=${completed}`, {
       method: 'PUT'
     });
   }

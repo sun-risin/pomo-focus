@@ -55,7 +55,7 @@ function updateTimerText() {
 
 // --- 타이머 제어 함수들 : export
 // start
-export function startTimer(onTick, onFinish) {
+export function startTimer(onFinish) {
     if (isRunning()) return;
 
     // 시작 시 세팅 칸 숨기기
@@ -77,6 +77,7 @@ export function startTimer(onTick, onFinish) {
             pauseTimer();
             updateTimerVisual(0);
             updateTimerText();
+            if (onFinish) onFinish();  // ← 추가
             return;
         }
 
