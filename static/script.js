@@ -22,6 +22,10 @@ const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(TodoModule.getTodos())
     });
+  },
+  loadTodos: async () => {
+    const res = await fetch(`${BASE}/get-todos`);
+    return await res.json();
   }
 };
 
@@ -58,3 +62,10 @@ addTodoBtn.addEventListener('click', async () => {
     TodoModule.renderTodos();
     await api.saveAll(); // todo 추가 후 전체 저장
 });
+
+// --- 초기화
+(async () => {
+  const todos = await api.loadTodos();
+  // TodoModule에 DB 내용 기반으로 todo list 추가하는 함수 필요
+  TodoModule.renderTodos();
+})();

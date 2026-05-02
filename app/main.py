@@ -30,4 +30,9 @@ def save_todos(todos: List[Todo]):
     write_db([todo.model_dump() for todo in todos])
     return {"message": "Saved successfully"}
 
+# - JSON 파일 데이터에서 읽기        
+@app.get("/todos", response_model=List[Todo])
+def get_todos():
+    return read_db()
+
 # 로컬 서버 실행: uvicorn app.main:app --reload
