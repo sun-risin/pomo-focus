@@ -65,7 +65,7 @@ addTodoBtn.addEventListener('click', async () => {
 
 // --- 초기화
 (async () => {
-  const todos = await api.loadTodos();
-  // TodoModule에 DB 내용 기반으로 todo list 추가하는 함수 필요
+  const dbTodos = await api.loadTodos();
+  TodoModule.loadTodos(dbTodos);
   TodoModule.renderTodos();
 })();
